@@ -50,8 +50,31 @@ public class LivroController {
 
                 livrosRepo.save(livro);
             }
+            return titulo;
+        }
 
-        return "redirect:/livros/list";
+    @RequestMapping("/update")
+    public String update(@RequestParam("id") long id, Model ui) {
+        Optional<Livro> result = livrosRepo.findById(id);
+        if(result.isPresent()) {
+            ui. addAttribute("livro", result.get());
+            ui. addAttribute("generos" , generosRepo.findAll()) ;
+            return "/livro/update";
+        }
+            return "redirect:/livros/list";
+        }
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(@RequestParam("id") long id, @RequestParam("titulo") String titulo, @RequestParam ("genero") long generoid) {
+        Optional<Livro> result = livrosRepo.findById(id);
+        if(result.isPresent()) {
+            Optional<Genero> resultGenero = generosRepo. findById(generoid) ;
+            if(resultGenero.isPresent()) {
+             result.get().setTitulo(titulo);
+             result.get().setGenero(resultGenero.get());
+             livrosRepo.save(result.get());
+           
 
     }
 }
+    return "redirect:/livros/list";
+}}
